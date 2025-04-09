@@ -36,14 +36,14 @@ pipeline {
       }
     }
 
-    stage('Test') {
-      steps {
-        echo 'Running tests locally...'
-        sh 'npm install'
-        sh 'npm test'
+   stage('Test') {
+     steps {
+       echo 'Running tests in Jenkins workspace (Windows)...'
+       bat 'npm install'
+       bat 'npm test'
   }
 }
- 
+
 
     stage('Push') {
       steps {
