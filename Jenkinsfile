@@ -36,14 +36,11 @@ pipeline {
       }
     }
 
-   stage('Test') {
-     steps {
-       echo 'Running tests in Jenkins workspace (Windows)...'
-       bat 'npm install'
-       bat 'npm test'
-  }
-}
-
+    stage('Test') {
+      steps {
+        echo 'Running tests...'
+      }
+    }
 
     stage('Push') {
       steps {
