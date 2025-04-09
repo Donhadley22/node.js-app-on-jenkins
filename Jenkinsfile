@@ -38,15 +38,12 @@ pipeline {
 
     stage('Test') {
       steps {
-        echo 'Testing Docker container...'
-        script {
-          docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").inside {
-            sh 'npm install'
-            sh 'npm test'
-          }
-        }
-      }
-    }
+        echo 'Running tests locally...'
+        sh 'npm install'
+        sh 'npm test'
+  }
+}
+ 
 
     stage('Push') {
       steps {
