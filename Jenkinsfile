@@ -7,7 +7,7 @@ pipeline {
     DOCKER_REGISTRY       = 'index.docker.io/v1'
     DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
     DOCKER_TAG            = "${env.BUILD_NUMBER}"
-    EC2_INSTANCE_ID       = 'i-02eb6d1560b86c5c3'
+    EC2_INSTANCE_ID       = 'i-05d37916155efbc80'
     EC2_REGION            = 'us-east-1'
     SSH_CREDENTIALS_ID    = 'ec2-ssh-key'
     EC2_USER              = 'ubuntu'
@@ -60,13 +60,13 @@ pipeline {
         script {
           sshagent([SSH_CREDENTIALS_ID]) {
             sh """
-              ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
-              docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
-              docker stop ${CONTAINER_NAME} || true
-              docker rm ${CONTAINER_NAME} || true
-              docker run -d --name ${CONTAINER_NAME} -p ${HOST_PORT}:${CONTAINER_PORT} ${DOCKER_IMAGE}:${DOCKER_TAG}
-              EOF
-            """
+              ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} \\
+              'docker pull ${DOCKER_IMAGE}:${DOCKER_TAG} && \
+              docker stop ${CONTAINER_NAME} || true && \
+              docker rm ${CONTAINER_NAME} || true && \
+              docker run -d --name ${CONTAINER_NAME} -p ${HOST_PORT}:${CONTAINER_PORT} ${DOCKER_IMAGE}:${DOCKER_TAG}'
+             """
+
           }
         }
       }
