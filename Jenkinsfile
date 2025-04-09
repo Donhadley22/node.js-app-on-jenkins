@@ -9,10 +9,10 @@ pipeline {
     DOCKER_TAG            = "${env.BUILD_NUMBER}"
     EC2_INSTANCE_ID       = 'i-02eb6d1560b86c5c3'
     EC2_REGION            = 'us-east-1'
-    SSH_CREDENTIALS_ID    = 'ec2-ssh-ke'
+    SSH_CREDENTIALS_ID    = 'ec2-ssh-key'
     EC2_USER              = 'ubuntu'
     EC2_KEY_PAIR_NAME     = 'Caleb-key'
-    EC2_HOST              = '54.234.226.28'
+    EC2_HOST              = '3.87.218.77'
     CONTAINER_NAME        = 'chucknorris-app'
     HOST_PORT             = 80
     CONTAINER_PORT        = 3000
@@ -46,12 +46,13 @@ pipeline {
       steps {
         echo 'Pushing Docker image to Docker Hub...'
         script {
-          docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
-            docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
-          }
-        }
+          docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
+          docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
       }
     }
+  }
+}
+
 
     stage('Deploy') {
       steps {

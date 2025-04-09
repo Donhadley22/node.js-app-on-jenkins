@@ -136,3 +136,5 @@ dist
 .pnp.*
 .qodo
 
+
+.early.coverage
