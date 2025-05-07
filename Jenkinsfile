@@ -14,7 +14,7 @@ pipeline {
     EC2_REGION            = 'us-east-1'
     SSH_CREDENTIALS_ID    = 'ec2-ssh-key'
     EC2_USER              = 'ubuntu'
-    EC2_HOST              = '3.87.218.77'
+    EC2_HOST              = '18.205.236.222'
     CONTAINER_NAME        = 'chucknorris-app'
     HOST_PORT             = 80
     CONTAINER_PORT        = 3000
