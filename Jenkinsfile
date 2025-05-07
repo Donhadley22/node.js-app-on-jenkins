@@ -19,7 +19,7 @@ pipeline {
     HOST_PORT             = 80
     CONTAINER_PORT        = 3000
     SONAR_PROJECT_KEY     = 'nodejs-app-sonar'
-    SONAR_URL             = 'http://52.23.172.117:9000'
+    SONAR_HOST_URL        = 'http://52.23.172.117:9000'
     SONAR_CREDENTIALS_ID  = 'sonar-creds' // Replace with your actual SonarQube credentials ID
   }
 
@@ -47,20 +47,21 @@ pipeline {
       }
     }
 
-    stage('SonarQube Analysis') {
-      steps {
-        withSonarQubeEnv('MySonarServer') { // This name must match Jenkins config
-          sh """
-            npx sonar-scanner \
-              -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-              -Dsonar.sources=. \
-              -Dsonar.host.url=$SONAR_URL \
-              -Dsonar.login=$SONAR_CREDENTIALS_ID
-          """
-        }
+   stage('SonarQube Analysis') {
+     steps {
+       withCredentials([string(credentialsId: 'sonar-creds', variable: 'SONAR_CREDENTIALS_ID')]) {
+       withSonarQubeEnv('MySonarServer') {
+       sh '''
+          npx sonar-scanner \
+            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_CREDENTIALS_ID
+         '''
       }
     }
-
+  }
+}
 
     stage('Build') {
       steps {
