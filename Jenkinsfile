@@ -1,31 +1,67 @@
 pipeline {
   agent any
 
+  tools {
+    nodejs 'Nodejs 23'
+  }
+
   environment {
     DOCKER_IMAGE          = 'donhadley/chucknorris-jokes'
     DOCKERFILE            = 'Dockerfile'
     DOCKER_REGISTRY       = 'index.docker.io/v1'
     DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
     DOCKER_TAG            = "${env.BUILD_NUMBER}"
-    EC2_INSTANCE_ID       = 'i-05d37916155efbc80'
     EC2_REGION            = 'us-east-1'
     SSH_CREDENTIALS_ID    = 'ec2-ssh-key'
     EC2_USER              = 'ubuntu'
-    EC2_KEY_PAIR_NAME     = 'Caleb-key'
     EC2_HOST              = '3.87.218.77'
     CONTAINER_NAME        = 'chucknorris-app'
     HOST_PORT             = 80
     CONTAINER_PORT        = 3000
+    SONAR_PROJECT_KEY     = 'nodejs-app-sonar'
+    SONAR_URL             = 'http://sonarqube:9000'
+    SONAR_TOKEN           = 'your-sonar-token' // Replace with your actual SonarQube token
+    SONAR_CREDENTIALS_ID  = 'sonar-creds' // Replace with your actual SonarQube credentials ID
   }
 
   stages {
 
-    stage('Checkout') {
+    stage('Git Checkout') {
       steps {
         echo 'Checking out code...'
+        git url: 'https://github.com/Donhadley22/node.js-app-on-jenkins.git', branch: 'main'
         checkout scm
       }
     }
+
+    stage('Install Dependencies') {
+      steps {
+        echo 'Installing dependencies...'
+        sh 'npm install'
+      }
+    }
+    
+    stage('Run Test') {
+      steps {
+        echo 'Running tests...'
+        sh 'npm test'
+      }
+    }
+
+    stage('SonarQube Analysis') {
+      steps {
+        withSonarQubeEnv('MySonarServer') { // This name must match Jenkins config
+          sh """
+            npx sonar-scanner \
+              -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+              -Dsonar.sources=. \
+              -Dsonar.host.url=$SONAR_URL \
+              -Dsonar.login=$SONAR_TOKEN
+          """
+        }
+      }
+    }
+
 
     stage('Build') {
       steps {
@@ -33,12 +69,6 @@ pipeline {
         script {
           docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", "-f ${DOCKERFILE} .")
         }
-      }
-    }
-
-    stage('Test') {
-      steps {
-        echo 'Running tests...'
       }
     }
 
