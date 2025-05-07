@@ -19,7 +19,7 @@ pipeline {
     HOST_PORT             = 80
     CONTAINER_PORT        = 3000
     SONAR_PROJECT_KEY     = 'nodejs-app-sonar'
-    SONAR_URL             = 'http://sonarqube:9000'
+    SONAR_URL             = 'http://52.23.172.117:9000'
     SONAR_TOKEN           = 'your-sonar-token' // Replace with your actual SonarQube token
     SONAR_CREDENTIALS_ID  = 'sonar-creds' // Replace with your actual SonarQube credentials ID
   }
