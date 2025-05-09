@@ -3,7 +3,6 @@ pipeline {
 
   tools {
     nodejs 'Nodejs 23'
-    dependencyCheck 'OWASP Dependency-Check'
   }
 
   environment {
@@ -65,13 +64,19 @@ pipeline {
 }
 
     
-    stage('Dependency-Check Analysis') {
-      steps {
-        sh 'dependency-check.sh --project Chucknorris-app --scan . --format ALL --out ./reports'
-        archiveArtifacts artifacts: 'reports/*', fingerprint: true
-        }
-      }
     
+   stage('Dependency-Check Analysis') {
+     steps {
+       dependencyCheck additionalArguments: '''
+          --project MyApp
+          --scan .
+          --format ALL
+          --out ./reports
+       ''', odcInstallation: 'OWASP Dependency-Check'
+
+      dependencyCheckPublisher pattern: 'reports/dependency-check-report.xml'
+    }
+  }
     
     stage('Build') {
       steps {
