@@ -64,13 +64,14 @@ pipeline {
   }
 }
 
-    stages {
-        stage('Dependency-Check Analysis') {
-            steps {
-                sh 'dependency-check.sh --project MyApp --scan . --format ALL --out ./reports'
-            }
+    
+    stage('Dependency-Check Analysis') {
+      steps {
+        sh 'dependency-check.sh --project Chucknorris-app --scan . --format ALL --out ./reports'
+        archiveArtifacts artifacts: 'reports/*', fingerprint: true
         }
-    }
+      }
+    
     
     stage('Build') {
       steps {
