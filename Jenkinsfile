@@ -63,17 +63,12 @@ pipeline {
   }
 }
 
-
-    stages {
-        stage('Run Dependency-Check') {
-            steps {
-                sh '/opt/dependency-check/dependency-check/bin/dependency-check.sh --project "MyApp" --scan . --format "ALL" --out ./reports'
+    stage('Run Dependency-Check') {
+      steps {
+        sh '/opt/dependency-check/dependency-check/bin/dependency-check.sh --project "MyApp" --scan . --format "ALL" --out ./reports'
             }
         }
-    }
-}
-
-
+    
     stage('Build') {
       steps {
         echo 'Building Docker image...'
