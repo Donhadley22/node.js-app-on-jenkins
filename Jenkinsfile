@@ -3,6 +3,7 @@ pipeline {
 
   tools {
     nodejs 'Nodejs 23'
+    dependencyCheck 'OWASP Dependency-Check'
   }
 
   environment {
@@ -63,11 +64,13 @@ pipeline {
   }
 }
 
-    stage('Run Dependency-Check') {
-      steps {
-        sh '/opt/dependency-check/dependency-check/bin/dependency-check.sh --project "MyApp" --scan . --format "ALL" --out ./reports'
+    stages {
+        stage('Dependency-Check Analysis') {
+            steps {
+                sh 'dependency-check.sh --project MyApp --scan . --format ALL --out ./reports'
             }
         }
+    }
     
     stage('Build') {
       steps {
