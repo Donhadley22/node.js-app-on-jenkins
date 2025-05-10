@@ -21,6 +21,7 @@ pipeline {
     SONAR_PROJECT_KEY     = 'nodejs-app-sonar'
     SONAR_HOST_URL        = 'http://52.23.172.117:9000'
     SONAR_CREDENTIALS_ID  = 'sonar-creds' // Replace with your actual SonarQube credentials ID
+    NVD_API_KEY = 'NVD_API_KEY' // Jenkins credentials ID for NVD API key
   }
 
   stages {
@@ -72,6 +73,7 @@ pipeline {
           --scan .
           --format ALL
           --out ./reports
+          --nvdApiKey ${env.NVD_API_KEY}
        ''', odcInstallation: 'OWASP Dependency-Check'
 
       dependencyCheckPublisher pattern: 'reports/dependency-check-report.xml'
