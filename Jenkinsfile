@@ -14,12 +14,12 @@ pipeline {
     EC2_REGION            = 'us-east-1'
     SSH_CREDENTIALS_ID    = 'ec2-ssh-key'
     EC2_USER              = 'ubuntu'
-    EC2_HOST              = '18.205.236.222'
+    EC2_HOST              = '3.94.198.65' // Replace with your EC2 instance public IP or DNS
     CONTAINER_NAME        = 'chucknorris-app'
     HOST_PORT             = 80
     CONTAINER_PORT        = 3000
     SONAR_PROJECT_KEY     = 'nodejs-app-sonar'
-    SONAR_HOST_URL        = 'http://52.23.172.117:9000'
+    SONAR_HOST_URL        = 'http://54.225.39.94/:9000'
     SONAR_CREDENTIALS_ID  = 'sonar-creds' // Replace with your actual SonarQube credentials ID
     NVD_API_KEY = 'NVD_API_KEY' // Jenkins credentials ID for NVD API key
   }
