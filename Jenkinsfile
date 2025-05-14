@@ -118,6 +118,18 @@ pipeline {
         }
       }
     }
+
+    stage('ZAP Scan') {
+      steps {
+        sh '''
+          docker run --rm \
+            -v $(pwd):/zap/wrk/:rw \
+            owasp/zap2docker-stable zap-baseline.py \
+            -t http://3.94.198.65:3000 \
+            -r zap-report.html
+        '''
+      }
+    }
   }
 
   post {
