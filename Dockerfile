@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:20-alpine3.20@sha256:abc123def456ghi789jkl012mno345pqrs678tuv901wxyz234abcd567efgh890
+FROM node:20-alpine3.20
 
 # Set environment variable
 ENV NODE_ENV=production
