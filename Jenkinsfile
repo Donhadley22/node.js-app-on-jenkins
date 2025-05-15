@@ -24,6 +24,12 @@ pipeline {
     NVD_API_KEY = 'NVD_API_KEY' // Jenkins credentials ID for NVD API key
   }
 
+parameters {
+        choice(name: 'SCAN_TYPE', choices: ['Baseline', 'APIS', 'Full'], description: '')
+        string(name: 'TARGET', defaultValue: 'http://your-target-url', description: '')
+        booleanParam(name: 'GENERATE_REPORT', defaultValue: true, description: '')
+    }
+
   stages {
 
     stage('Git Checkout') {
@@ -119,16 +125,34 @@ pipeline {
       }
     }
 
-    stage('ZAP Scan') {
-      steps {
-        sh '''
-          docker run --rm \
-            -v $(pwd):/zap/wrk/:rw \
-            owasp/zap2docker-stable zap-baseline.py \
-            -t http://3.94.198.65:3000 \
-            -r zap-report.html
-        '''
-      }
+    stage('Run ZAP Scan') {
+            steps {
+                script {
+                    def scanScripts = [
+                        'Baseline': 'zap-baseline.py',
+                        'APIS'    : 'zap-api-scan.py',
+                        'Full'    : 'zap-full-scan.py'
+                    ]
+                    def scriptName = scanScripts[params.SCAN_TYPE]
+                    if (!scriptName) {
+                        error "Invalid SCAN_TYPE: ${params.SCAN_TYPE}"
+                    }
+                    sh """
+                        docker pull zaproxy/zap-stable
+                        docker run --rm -v \$(pwd):/zap/wrk/:rw zaproxy/zap-stable ${scriptName} -t ${params.TARGET} -r report.html -I
+                    """
+                }
+            }
+        }
+
+        stage('Archive Report') {
+            when {
+                expression { return params.GENERATE_REPORT }
+            }
+            steps {
+                archiveArtifacts artifacts: 'report.html', allowEmptyArchive: true
+            }
+        }
     }
   }
 
