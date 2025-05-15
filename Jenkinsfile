@@ -25,9 +25,9 @@ pipeline {
   }
 
 parameters {
-        choice(name: 'SCAN_TYPE', choices: ['Baseline', 'APIS', 'Full'], description: '')
-        string(name: 'TARGET', defaultValue: 'http://your-target-url', description: '')
-        booleanParam(name: 'GENERATE_REPORT', defaultValue: true, description: '')
+        choice(name: 'SCAN_TYPE', choices: ['Baseline', 'APIS', 'Full'], description: 'Type of scan to perform')
+        string(name: 'TARGET', defaultValue: 'http://54.90.58.10:3000/', description: 'Target URL to scan')
+        booleanParam(name: 'GENERATE_REPORT', defaultValue: true, description: 'Generate HTML report')
     }
 
   stages {
@@ -164,5 +164,5 @@ parameters {
       echo "❌ Deployment failed. Please check the logs for details."
     }
   }
-}
+
 // This Jenkinsfile is a declarative pipeline that automates the process of building, testing, and deploying a Dockerized Node.js application to an AWS EC2 instance. It includes stages for checking out the code, building the Docker image, running tests, pushing the image to Docker Hub, and deploying it to the EC2 instance. The pipeline uses environment variables for configuration and SSH credentials for secure access to the EC2 instance.
