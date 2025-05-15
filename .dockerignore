@@ -22,13 +22,3 @@
 **/values.dev.yaml
 LICENSE
 README.md
-.qodo
-.github
-/terraform
-.terraform
-*.tf
-*.tfstate
-*.tfvars
-*.tfstate.*
-.docker-compose
-.docker-compose.*

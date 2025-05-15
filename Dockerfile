@@ -1,24 +1,10 @@
-# Use the official Node.js image as the base image
-FROM node:20-alpine3.20
-
-# Set environment variable
+FROM node:lts-alpine
 ENV NODE_ENV=production
-
-# Set the working directory
-WORKDIR /app
-
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci
-
-# Copy the rest of the application code
+WORKDIR /usr/src/app
+COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
+RUN npm install --production --silent && mv node_modules ../
 COPY . .
-
-# Expose the port the app runs on
 EXPOSE 3000
-
-# Define the command to run the app
+RUN chown -R node /usr/src/app
+USER node
 CMD ["npm", "start"]
-
