@@ -139,6 +139,7 @@ parameters {
                     }
                     sh """
                         docker pull zaproxy/zap-stable
+                        chmod 777 \$(pwd)
                         docker run --rm -v \$(pwd):/zap/wrk/:rw zaproxy/zap-stable ${scriptName} -t ${params.TARGET} -r report.html -I
                     """
                 }
