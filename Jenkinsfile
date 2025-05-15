@@ -16,7 +16,7 @@ pipeline {
     EC2_USER              = 'ubuntu'
     EC2_HOST              = '54.90.58.10' // Replace with your EC2 instance public IP or DNS
     CONTAINER_NAME        = 'chucknorris-app'
-    HOST_PORT             = 80
+    HOST_PORT             = 3000
     CONTAINER_PORT        = 3000
     SONAR_PROJECT_KEY     = 'nodejs-app-sonar'
     SONAR_HOST_URL        = 'http://34.207.151.185:9000'
