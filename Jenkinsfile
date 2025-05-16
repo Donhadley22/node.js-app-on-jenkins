@@ -126,25 +126,37 @@ parameters {
     }
 
     stage('Run ZAP Scan') {
-            steps {
-                script {
-                    def scanScripts = [
-                        'Baseline': 'zap-baseline.py',
-                        'APIS'    : 'zap-api-scan.py',
-                        'Full'    : 'zap-full-scan.py'
-                    ]
-                    def scriptName = scanScripts[params.SCAN_TYPE]
-                    if (!scriptName) {
-                        error "Invalid SCAN_TYPE: ${params.SCAN_TYPE}"
-                    }
-                    sh """
-                        docker pull zaproxy/zap-stable
-                        chmod 777 \$(pwd)
-                        docker run --rm -v \$(pwd):/zap/wrk/:rw zaproxy/zap-stable ${scriptName} -t ${params.TARGET} -r report.html -I
-                    """
-                }
+    steps {
+        script {
+            def scanScripts = [
+                'Baseline': 'zap-baseline.py',
+                'APIS'    : 'zap-api-scan.py',
+                'Full'    : 'zap-full-scan.py'
+            ]
+            def scriptName = scanScripts[params.SCAN_TYPE]
+            if (!scriptName) {
+                error "Invalid SCAN_TYPE: ${params.SCAN_TYPE}"
+            }
+
+            def exitCode = sh(
+                script: """
+                    docker pull zaproxy/zap-stable
+                    chmod 777 \$(pwd)
+                    docker run --rm -v \$(pwd):/zap/wrk/:rw zaproxy/zap-stable ${scriptName} -t ${params.TARGET} -r report.html -I
+                """,
+                returnStatus: true
+            )
+
+            if (exitCode == 0) {
+                echo "ZAP scan completed successfully with no issues."
+            } else if (exitCode == 2) {
+                echo "ZAP scan completed with warnings."
+            } else {
+                error "ZAP scan failed with exit code ${exitCode}."
             }
         }
+    }
+}
 
         stage('Archive Report') {
             when {
