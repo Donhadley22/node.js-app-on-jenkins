@@ -26,7 +26,7 @@ pipeline {
 
 parameters {
         choice(name: 'SCAN_TYPE', choices: ['Baseline', 'APIS', 'Full'], description: 'Type of scan to perform')
-        string(name: 'TARGET', defaultValue: 'http://54.90.58.10:3000/', description: 'Target URL to scan')
+        string(name: 'TARGET', defaultValue: 'http://13.220.101.106:3000/', description: 'Target URL to scan')
         booleanParam(name: 'GENERATE_REPORT', defaultValue: true, description: 'Generate HTML report')
     }
 
