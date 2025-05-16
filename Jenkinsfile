@@ -159,7 +159,7 @@ parameters {
 
   post {
     success {
-      echo "✅ Deployed successfully to EC2 🎉"
+      echo "Deployed successfully to EC2 🎉"
     }
     failure {
       echo "❌ Deployment failed. Please check the logs for details."
