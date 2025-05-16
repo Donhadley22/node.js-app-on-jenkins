@@ -36,7 +36,6 @@ parameters {
       steps {
         echo 'Checking out code...'
         git url: 'https://github.com/Donhadley22/node.js-app-on-jenkins.git', branch: 'main'
-        checkout scm
       }
     }
 
@@ -139,7 +138,7 @@ parameters {
             }
 
             def exitCode = sh(
-                script: """
+                script: """#!/bin/bash
                     docker pull zaproxy/zap-stable
                     chmod 777 \$(pwd)
                     docker run --rm -v \$(pwd):/zap/wrk/:rw zaproxy/zap-stable ${scriptName} -t ${params.TARGET} -r report.html -I
@@ -148,11 +147,11 @@ parameters {
             )
 
             if (exitCode == 0) {
-                echo "ZAP scan completed successfully with no issues."
-            } else if (exitCode == 2) {
-                echo "ZAP scan completed with warnings."
+                echo "✅ ZAP scan completed successfully with no issues."
+            } else if (exitCode == 1) {
+                echo "⚠️ ZAP scan completed with warnings."
             } else {
-                error "ZAP scan failed with exit code ${exitCode}."
+                error "❌ ZAP scan failed with exit code ${exitCode}."
             }
         }
     }
