@@ -155,6 +155,7 @@ parameters {
                 }
             }
         }
+    }
         stage('Archive Report') {
             when {
                 expression { return params.GENERATE_REPORT }
@@ -174,5 +175,4 @@ parameters {
       echo "❌ Deployment failed. Please check the logs for details."
     }
   }
-}
 // This Jenkinsfile is a declarative pipeline that automates the process of building, testing, and deploying a Dockerized Node.js application to an AWS EC2 instance. It includes stages for checking out the code, building the Docker image, running tests, pushing the image to Docker Hub, and deploying it to the EC2 instance. The pipeline uses environment variables for configuration and SSH credentials for secure access to the EC2 instance.
