@@ -14,19 +14,19 @@ pipeline {
     EC2_REGION            = 'us-east-1'
     SSH_CREDENTIALS_ID    = 'ec2-ssh-key'
     EC2_USER              = 'ubuntu'
-    EC2_HOST              = '13.220.101.106' // Replace with your EC2 instance public IP or DNS
+    EC2_HOST              = '54.226.117.167' // Replace with your EC2 instance public IP or DNS
     CONTAINER_NAME        = 'chucknorris-app'
     HOST_PORT             = 3000
     CONTAINER_PORT        = 3000
     SONAR_PROJECT_KEY     = 'nodejs-app-sonar'
-    SONAR_HOST_URL        = 'http://18.212.86.73:9000'
+    SONAR_HOST_URL        = 'http://34.203.10.244:9000'
     SONAR_CREDENTIALS_ID  = 'sonar-creds' // Replace with your actual SonarQube credentials ID
     NVD_API_KEY = 'NVD_API_KEY' // Jenkins credentials ID for NVD API key
   }
 
 parameters {
         choice(name: 'SCAN_TYPE', choices: ['Baseline', 'APIS', 'Full'], description: 'Type of scan to perform')
-        string(name: 'TARGET', defaultValue: 'http://13.220.101.106:3000/', description: 'Target URL to scan')
+        string(name: 'TARGET', defaultValue: 'http://54.226.117.167:3000/', description: 'Target URL to scan')
         booleanParam(name: 'GENERATE_REPORT', defaultValue: true, description: 'Generate HTML report')
     }
 
@@ -136,27 +136,25 @@ parameters {
             if (!scriptName) {
                 error "Invalid SCAN_TYPE: ${params.SCAN_TYPE}"
             }
-
-            def exitCode = sh(
-                script: """#!/bin/bash
-                    docker pull zaproxy/zap-stable
-                    chmod 777 \$(pwd)
-                    docker run --rm -v \$(pwd):/zap/wrk/:rw zaproxy/zap-stable ${scriptName} -t ${params.TARGET} -r report.html -I
-                """,
-                returnStatus: true
-            )
-
-            if (exitCode == 0) {
-                echo "✅ ZAP scan completed successfully with no issues."
-            } else if (exitCode == 1) {
-                echo "⚠️ ZAP scan completed with warnings."
-            } else {
-                error "❌ ZAP scan failed with exit code ${exitCode}."
-            }
+            sh """
+                docker pull zaproxy/zap-stable
+                chmod 777 \$(pwd)
+                docker run --rm -v \$(pwd):/zap/wrk/:rw zaproxy/zap-stable ${scriptName} -t ${params.TARGET} -r report.html -I
+            """
         }
     }
 }
-
+    stage('Publish ZAP Report') {
+        steps {
+            script {
+                def reportFile = 'report.html'
+                if (fileExists(reportFile)) {
+                    echo "ZAP scan report generated: ${reportFile}"
+                } else {
+                    error "ZAP scan report not found: ${reportFile}"
+                }
+            }
+        }
         stage('Archive Report') {
             when {
                 expression { return params.GENERATE_REPORT }
