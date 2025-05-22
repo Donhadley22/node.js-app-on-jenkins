@@ -47,7 +47,7 @@ env:
 
 
 jobs:
-  build:
+  build-test-deploy:
 
     runs-on: ubuntu-latest
 
@@ -81,15 +81,20 @@ jobs:
           -Dsonar.login=${{ env.SONAR_TOKEN }}
           
     - name: Run OWASP Dependency-Check
-      uses: owasp/dependency-check-action@v3
+      uses: owasp/dependency-check-action@v2.1.2
       with:
         project: "ChucknorrissApp"
         path: "."
         format: "ALL"
         out: "reports"
       env:
-       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
+    - name: Upload report
+      uses: actions/upload-artifact@v3
+      with:
+        name: dependency-check-report
+        path: reports/
 
 
 
