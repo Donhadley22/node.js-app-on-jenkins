@@ -80,21 +80,26 @@ jobs:
           -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
           -Dsonar.login=${{ env.SONAR_TOKEN }}
           
+    - name: Create report directory
+      run: mkdir -p reports
+
     - name: Run OWASP Dependency-Check
-      uses: owasp/dependency-check-action@v2.1.2
-      with:
-        project: "ChucknorrissApp"
-        path: "."
-        format: "ALL"
-        out: "reports"
       env:
         NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/src \
+            -w /src \
+            owasp/dependency-check \
+            --project "ChucknorrissApp" \
+            --scan /src \
+            --format "ALL" \
+            --out /src/reports \
+            --nvdApiKey "$NVD_API_KEY"
 
-    - name: Upload report
+    - name: Upload OWASP Report
       uses: actions/upload-artifact@v3
       with:
         name: dependency-check-report
         path: reports/
-
-
 
