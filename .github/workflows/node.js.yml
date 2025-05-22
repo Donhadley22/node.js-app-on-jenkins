@@ -79,19 +79,22 @@ jobs:
           -Dsonar.sources=. \
           -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
           -Dsonar.login=${{ env.SONAR_TOKEN }}
-
+          
     - name: OWASP Dependency-Check
       env:
         NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
       run: |
         mkdir -p reports
         docker run --rm \
-          -v $(pwd):/src \
+          -u "$(id -u):$(id -g)" \
+          -v "$(pwd)":/src \
+          -w /src \
           owasp/dependency-check \
           --project "ChucknorrissApp" \
           --scan /src \
-          --format ALL \
+          --format "ALL" \
           --out /src/reports \
-          --nvdApiKey $NVD_API_KEY
+          --nvdApiKey "$NVD_API_KEY"
+
 
 
