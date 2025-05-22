@@ -81,14 +81,14 @@ jobs:
           -Dsonar.login=${{ env.SONAR_TOKEN }}
           
     - name: Run OWASP Dependency-Check
-      uses: dependency-check/Dependency-Check_Action@v3
+      uses: owasp/dependency-check-action@v3
       with:
-         project: "ChucknorrissApp"
-         path: "."
-         format: "ALL"
-         out: "reports"
+        project: "ChucknorrissApp"
+        path: "."
+        format: "ALL"
+        out: "reports"
       env:
-         NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+       NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
 
 
