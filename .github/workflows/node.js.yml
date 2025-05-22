@@ -8,6 +8,43 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+    
+  workflow_dispatch:
+    inputs:
+      SCAN_TYPE:
+        description: 'Type of scan to perform'
+        required: true
+        default: 'Baseline'
+        type: choice
+        options:
+          - Baseline
+          - APIS
+          - Full
+      TARGET:
+        description: 'Target URL to scan'
+        required: true
+        default: 'http://54.226.117.167:3000/'
+        type: string
+      GENERATE_REPORT:
+        description: 'Generate HTML report'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  DOCKER_IMAGE: donhadley/chucknorris-jokes
+  DOCKERFILE: Dockerfile
+  DOCKER_TAG: ${{ github.run_number }}
+  EC2_REGION: us-east-1
+  EC2_USER: ubuntu
+  EC2_HOST: 54.226.117.167
+  CONTAINER_NAME: chucknorris-app
+  HOST_PORT: 3000
+  CONTAINER_PORT: 3000
+  SONAR_PROJECT_KEY: nodejs-app-sonar
+  SONAR_HOST_URL: http://18.234.225.42:9000/
+  TARGET: ${{ github.event.inputs.TARGET || 'http://54.226.117.167:3000/' }}
+
 
 jobs:
   build:
@@ -34,3 +71,15 @@ jobs:
 
     - name: Run Tests
       run: npm test
+
+    - name: SonarQube Scan
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        npm install -g sonar-scanner
+        sonar-scanner \
+          -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
+          -Dsonar.login=${{ env.SONAR_TOKEN }}
+
