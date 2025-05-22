@@ -23,7 +23,7 @@ on:
       TARGET:
         description: 'Target URL to scan'
         required: true
-        default: 'http://54.226.117.167:3000/'
+        default: 'http://54.167.188.22:3000/'
         type: string
       GENERATE_REPORT:
         description: 'Generate HTML report'
@@ -37,13 +37,13 @@ env:
   DOCKER_TAG: ${{ github.run_number }}
   EC2_REGION: us-east-1
   EC2_USER: ubuntu
-  EC2_HOST: 54.226.117.167
+  EC2_HOST: 54.167.188.22
   CONTAINER_NAME: chucknorris-app
   HOST_PORT: 3000
   CONTAINER_PORT: 3000
   SONAR_PROJECT_KEY: nodejs-app-sonar
   SONAR_HOST_URL: http://18.234.225.42:9000/
-  TARGET: ${{ github.event.inputs.TARGET || 'http://54.226.117.167:3000/' }}
+  TARGET: ${{ github.event.inputs.TARGET || 'http://54.167.188.22:3000/' }}
 
 
 jobs:
@@ -82,4 +82,19 @@ jobs:
           -Dsonar.sources=. \
           -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
           -Dsonar.login=${{ env.SONAR_TOKEN }}
+
+    - name: OWASP Dependency-Check
+      env:
+        NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      run: |
+        mkdir -p reports
+        docker run --rm \
+          -v $(pwd):/src \
+          owasp/dependency-check \
+          --project "ChucknorrissApp" \
+          --scan /src \
+          --format ALL \
+          --out /src/reports \
+          --nvdApiKey $NVD_API_KEY
+
 
