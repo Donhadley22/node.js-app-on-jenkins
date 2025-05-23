@@ -95,10 +95,14 @@ jobs:
         username: ${{ env.EC2_USER }}
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         script: |
-          docker pull $DOCKER_IMAGE:$DOCKER_TAG
-          docker stop $CONTAINER_NAME || true
-          docker rm $CONTAINER_NAME || true
-          docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $DOCKER_IMAGE:$DOCKER_TAG
+          docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+          docker stop ${{ env.CONTAINER_NAME }} || true
+          docker rm ${{ env.CONTAINER_NAME }} || true
+          docker run -d \
+          --name ${{ env.CONTAINER_NAME }} \
+          -p ${{ env.HOST_PORT }}:${{ env.CONTAINER_PORT }} \
+          ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+
 
         
 
