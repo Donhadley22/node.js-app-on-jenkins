@@ -103,6 +103,17 @@ jobs:
           -p ${{ env.HOST_PORT }}:${{ env.CONTAINER_PORT }} \
           ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
 
+    - name: Run ZAP Scan
+      run: |
+        docker pull zaproxy/zap-stable
+        chmod 777 $(pwd)
+        docker run --rm -v $(pwd):/zap/wrk/:rw zaproxy/zap-stable \
+          zap-${{ github.event.inputs.SCAN_TYPE || 'baseline' }}.py \
+          -t ${{ github.event.inputs.TARGET || env.TARGET }} \
+          -r report.html -I
+
+
+
 
         
 
