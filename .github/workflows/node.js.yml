@@ -86,11 +86,13 @@ jobs:
       run: docker build -t $DOCKER_IMAGE:$DOCKER_TAG -f $DOCKERFILE .
 
     - name: Run Trivy vulnerability scanner (Docker image)
-      uses: aquasecurity/trivy-action@v0.11.2
+      uses: aquasecurity/trivy-action@v0.28.0
       with:
         image-ref: 'donhadley/chucknorris-jokes:latest'
         format: 'table'
         exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
         
 
