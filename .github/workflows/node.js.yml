@@ -112,6 +112,24 @@ jobs:
           -t ${{ github.event.inputs.TARGET || env.TARGET }} \
           -r report.html -I
 
+    - name: Publish ZAP Report
+      if: success()
+      run: |
+        if [ -f report.html ]; then
+          echo "ZAP scan report generated."
+        else
+          echo "ZAP scan report not found."
+          exit 1
+        fi
+
+    - name: Archive ZAP Report
+      if: ${{ github.event.inputs.GENERATE_REPORT == 'true' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: zap-report
+        path: report.html
+
+
 
 
 
