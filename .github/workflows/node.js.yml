@@ -85,14 +85,20 @@ jobs:
     - name: Build Docker Image
       run: docker build -t $DOCKER_IMAGE:$DOCKER_TAG -f $DOCKERFILE .
 
-    - name: Run Trivy vulnerability scanner (Docker image)
-      uses: aquasecurity/trivy-action@v0.30.0
+    - name: Push Docker Image
+      run: docker push $DOCKER_IMAGE:$DOCKER_TAG
+
+    - name: Deploy to EC2 via SSH
+      uses: appleboy/ssh-action@v1.0.3
       with:
-        image-ref: 'donhadley/chucknorris-jokes:latest'
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
+        host: ${{ env.EC2_HOST }}
+        username: ${{ env.EC2_USER }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        script: |
+          docker pull $DOCKER_IMAGE:$DOCKER_TAG
+          docker stop $CONTAINER_NAME || true
+          docker rm $CONTAINER_NAME || true
+          docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $DOCKER_IMAGE:$DOCKER_TAG
+
         
 
